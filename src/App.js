@@ -15,9 +15,20 @@ class App extends Component {
   }
 
   componentWillMount() {
-    let w = prompt("Enter Width:");
-    let h = prompt("Enter Height:");
-    console.log(w, h);
+    let w, h;
+    while (true) {
+      w = prompt("Enter Width:");
+      if (!Number.isNaN(w) && parseInt(w) > 3) {
+        break;
+      }
+    }
+
+    while (true) {
+      h = prompt("Enter Height:");
+      if (!Number.isNaN(h) && parseInt(h) > 3) {
+        break;
+      }
+    }
 
     this.setState({
       width: parseInt(w),
@@ -47,14 +58,16 @@ class App extends Component {
     }
     this.setState({
       spritePosition: arr,
-      marioPosition: [this.state.height / 2, this.state.width / 2],
+      marioPosition: [
+        Math.floor(this.state.height / 2),
+        Math.floor(this.state.width / 2),
+      ],
     });
   }
 
   componentDidMount() {
     ArrowKeysReact.config({
       left: () => {
-        console.log("left key detected.");
         if (this.state.marioPosition[1] !== 0) {
           this.checkWhetherToEjectSprite([
             this.state.marioPosition[0],
@@ -63,7 +76,6 @@ class App extends Component {
         }
       },
       right: () => {
-        console.log("right key detected.");
         if (this.state.marioPosition[1] !== this.state.width - 1) {
           this.checkWhetherToEjectSprite([
             this.state.marioPosition[0],
@@ -72,7 +84,6 @@ class App extends Component {
         }
       },
       up: () => {
-        console.log("up key detected.");
         if (this.state.marioPosition[0] !== 0) {
           this.checkWhetherToEjectSprite([
             this.state.marioPosition[0] - 1,
@@ -81,12 +92,7 @@ class App extends Component {
         }
       },
       down: () => {
-        console.log("down key detected.", [
-          this.state.marioPosition[0] + 1,
-          this.state.marioPosition[1],
-        ]);
         if (this.state.marioPosition[0] !== this.state.height - 1) {
-          console.log(this.state.marioPosition);
           this.checkWhetherToEjectSprite([
             this.state.marioPosition[0] + 1,
             this.state.marioPosition[1],
@@ -103,10 +109,7 @@ class App extends Component {
     this.state.spritePosition.map((el, i) => {
       if (newPosition[0] === el[0] && newPosition[1] === el[1]) {
         let tempSprite = this.state.spritePosition;
-        console.log(tempSprite);
         tempSprite.splice(i, 1);
-        console.log(tempSprite);
-
         this.setState({
           spritePosition: tempSprite,
         });
@@ -117,7 +120,6 @@ class App extends Component {
       this.setState({
         count: this.state.count + 1,
       });
-      console.log(this.state.count);
     });
   }
 
