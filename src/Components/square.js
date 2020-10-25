@@ -7,13 +7,13 @@ const square=(props)=>{
             {
             props.mario===true &&
             <div>
-                M
+               <img src={window.location.origin + "/Mario.png"} alt="Mario not Found"/>
             </div>
             }
             {
             props.sprite===true &&
             <div>
-                S
+                <img src={window.location.origin + "/Sprite.png"} alt="Sprite not Found"/>
             </div>
             }
         </div>     
