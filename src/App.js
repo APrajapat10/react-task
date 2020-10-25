@@ -15,8 +15,8 @@ class App extends Component {
   }
 
   componentWillMount() {
-    let w = prompt("Width");
-    let h = prompt("height");
+    let w = prompt("Enter Width:");
+    let h = prompt("Enter Height:");
     console.log(w, h);
 
     this.setState({
