@@ -1,127 +1,193 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { Component } from "react";
 import "./App.css";
 import Square from "./Components/square";
 
 import ArrowKeysReact from "arrow-keys-react";
 
-function App() {
-  const height = 10;
-  const width = 10;
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      height: 0,
+      width: 0,
+      count: 0,
+    };
+  }
 
-  const [marioPosition, setMarioPosition] = useState([width / 2, height / 2]);
-  const [spritePosition, setSpritePosition] = useState([]);
-  const [count, setCount] = useState(0);
+  componentWillMount() {
+    let w = prompt("Width");
+    let h = prompt("height");
+    console.log(w, h);
 
-  const mainRef = useRef(null);
-
-  useEffect(() => {
-    putSprites();
-    mainRef.current.focus();
-  }, [mainRef]);
-
-  ArrowKeysReact.config({
-    left: () => {
-      console.log("left key detected.");
-      if (marioPosition[1] !== 0) {
-        checkWhetherToEjectSprite([marioPosition[0], marioPosition[1] - 1]);
-      }
-    },
-    right: () => {
-      console.log("right key detected.");
-      if (marioPosition[1] !== width - 1) {
-        checkWhetherToEjectSprite([marioPosition[0], marioPosition[1] + 1]);
-      }
-    },
-    up: () => {
-      console.log("up key detected.");
-      if (marioPosition[0] !== 0) {
-        checkWhetherToEjectSprite([marioPosition[0] - 1, marioPosition[1]]);
-      }
-    },
-    down: () => {
-      console.log("down key detected.", [
-        marioPosition[0] + 1,
-        marioPosition[1],
-      ]);
-      if (marioPosition[0] !== height - 1) {
-        console.log(marioPosition);
-        checkWhetherToEjectSprite([marioPosition[0] + 1, marioPosition[1]]);
-      }
-    },
-  });
-
-  function checkWhetherToEjectSprite(newPosition) {
-    setMarioPosition(newPosition);
-    spritePosition.map((el, i) => {
-      if (newPosition[0] === el[0] && newPosition[1] === el[1]) {
-        let tempSprite = spritePosition;
-        console.log(tempSprite);
-        tempSprite.splice(i, 1);
-        console.log(tempSprite);
-        setSpritePosition(tempSprite);
-        if (spritePosition.length === 0) alert(`Your score is: ${count}`);
-      }
-      setCount(count + 1);
-      console.log(count);
+    this.setState({
+      width: parseInt(w),
+      height: parseInt(h),
+      marioPosition: [0, 0],
+      spritePosition: [],
     });
   }
 
-  function checkIfSpriteToBePrinted(row, col) {
-    for (let i = 0; i < spritePosition.length; i++) {
-      if (spritePosition[i][0] === row && spritePosition[i][1] === col)
-        return true;
-    }
-  }
-  function putSprites() {
-    const numberOfSprites = height <= width ? height : width;
+  putSprites() {
+    const numberOfSprites =
+      this.state.height <= this.state.width
+        ? this.state.height
+        : this.state.width;
     let arr = [];
     for (let i = 0; i < numberOfSprites; i++) {
       let possibleSprite = [
-        Math.floor(Math.random() * width),
-        Math.floor(Math.random() * height),
+        Math.floor(Math.random() * this.state.width),
+        Math.floor(Math.random() * this.state.height),
       ];
       if (
-        possibleSprite[0] === marioPosition[0] &&
-        possibleSprite[1] === marioPosition[1]
+        possibleSprite[0] === this.state.marioPosition[0] &&
+        possibleSprite[1] === this.state.marioPosition[1]
       )
         continue;
       arr.push(possibleSprite);
     }
-    setSpritePosition(arr);
+    this.setState({
+      spritePosition: arr,
+      marioPosition: [this.state.height / 2, this.state.width / 2],
+    });
   }
 
-  function displayRow(width, rowCount) {
+  componentDidMount() {
+    ArrowKeysReact.config({
+      left: () => {
+        console.log("left key detected.");
+        if (this.state.marioPosition[1] !== 0) {
+          this.checkWhetherToEjectSprite([
+            this.state.marioPosition[0],
+            this.state.marioPosition[1] - 1,
+          ]);
+        }
+      },
+      right: () => {
+        console.log("right key detected.");
+        if (this.state.marioPosition[1] !== this.state.width - 1) {
+          this.checkWhetherToEjectSprite([
+            this.state.marioPosition[0],
+            this.state.marioPosition[1] + 1,
+          ]);
+        }
+      },
+      up: () => {
+        console.log("up key detected.");
+        if (this.state.marioPosition[0] !== 0) {
+          this.checkWhetherToEjectSprite([
+            this.state.marioPosition[0] - 1,
+            this.state.marioPosition[1],
+          ]);
+        }
+      },
+      down: () => {
+        console.log("down key detected.", [
+          this.state.marioPosition[0] + 1,
+          this.state.marioPosition[1],
+        ]);
+        if (this.state.marioPosition[0] !== this.state.height - 1) {
+          console.log(this.state.marioPosition);
+          this.checkWhetherToEjectSprite([
+            this.state.marioPosition[0] + 1,
+            this.state.marioPosition[1],
+          ]);
+        }
+      },
+    });
+    this.putSprites();
+    this.nameInput.focus();
+  }
+
+  checkWhetherToEjectSprite(newPosition) {
+    this.setState({ marioPosition: newPosition });
+    this.state.spritePosition.map((el, i) => {
+      if (newPosition[0] === el[0] && newPosition[1] === el[1]) {
+        let tempSprite = this.state.spritePosition;
+        console.log(tempSprite);
+        tempSprite.splice(i, 1);
+        console.log(tempSprite);
+
+        this.setState({
+          spritePosition: tempSprite,
+        });
+        if (this.state.spritePosition.length === 0)
+          alert(`Your score is: ${this.state.count}`);
+      }
+
+      this.setState({
+        count: this.state.count + 1,
+      });
+      console.log(this.state.count);
+    });
+  }
+
+  displayRow(width, rowCount) {
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
         {[...Array(width)].map((e, i) => (
           <Square
             key={`${rowCount}${i}`}
             mario={
-              rowCount === marioPosition[0] && i === marioPosition[1]
+              rowCount === this.state.marioPosition[0] &&
+              i === this.state.marioPosition[1]
                 ? true
                 : false
             }
-            sprite={checkIfSpriteToBePrinted(rowCount, i) ? true : false}
+            sprite={this.checkIfSpriteToBePrinted(rowCount, i) ? true : false}
           />
         ))}
       </div>
     );
   }
-  function displayColumn(height) {
-    return (
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        {[...Array(height)].map((e, i) => (
-          <div>{displayRow(width, i)}</div>
-        ))}
-      </div>
-    );
+
+  checkIfSpriteToBePrinted(row, col) {
+    for (let i = 0; i < this.state.spritePosition.length; i++) {
+      if (
+        this.state.spritePosition[i][0] === row &&
+        this.state.spritePosition[i][1] === col
+      )
+        return true;
+    }
   }
 
-  return (
-    <div {...ArrowKeysReact.events} tabIndex="1" ref={mainRef}>
-      {displayColumn(height)}
-    </div>
-  );
+  render() {
+    return (
+      <a
+        {...ArrowKeysReact.events}
+        tabIndex="1"
+        ref={(input) => {
+          this.nameInput = input;
+        }}
+      >
+        {this.state.height !== 0 && (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {[...Array(this.state.height)].map((e, index) => (
+              <div>
+                {
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    {[...Array(this.state.width)].map((e, i) => (
+                      <Square
+                        key={`${index}${i}`}
+                        mario={
+                          index === this.state.marioPosition[0] &&
+                          i === this.state.marioPosition[1]
+                            ? true
+                            : false
+                        }
+                        sprite={
+                          this.checkIfSpriteToBePrinted(index, i) ? true : false
+                        }
+                      />
+                    ))}
+                  </div>
+                }
+              </div>
+            ))}
+          </div>
+        )}
+      </a>
+    );
+  }
 }
 
 export default App;
